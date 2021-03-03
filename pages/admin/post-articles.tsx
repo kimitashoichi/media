@@ -1,10 +1,15 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
+import { AddCardBody } from "../api/articles/index";
+
 
 const PostArticles: React.FC = () => {
   const {register, handleSubmit, watch, errors} = useForm();
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = (data: any) => {
+    console.log(data);
+    AddCardBody(data);
+  }
 
   return (
     <>
