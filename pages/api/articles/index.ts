@@ -1,5 +1,5 @@
 import React from "react";
-import firebase from '../firebase';
+import { firestore } from '../firebase';
 
 // firebaseに記事データを保存する記載をする
 // 前に作成したものの流用でOK
@@ -7,8 +7,7 @@ import firebase from '../firebase';
 // データ投稿
 export const AddCardBody = async (data: any) => {
   try {
-    await firebase
-    .firestore()
+    await firestore
     .collection('test')
     .doc()
     .set(data)

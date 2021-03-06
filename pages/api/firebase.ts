@@ -1,5 +1,6 @@
 // initialize firebase
 import firebase from 'firebase';
+import 'firebase/storage';
 import 'firebase/auth';
 
 const config = {
@@ -14,6 +15,6 @@ const config = {
 
 firebase.initializeApp(config);
 
-export const db = firebase.firestore();
-export const functions = firebase.functions();
-export default firebase;
+// 画像データ保存先
+export const storage = firebase.storage();
+export const firestore = firebase.firestore();

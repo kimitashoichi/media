@@ -1,14 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AddCardBody } from "../api/articles/index";
+import { storage } from "../api/firebase";
 
 
+// TODO1: リセットボタンが動くようにする
+// TODO2: 同じ名前のファイルを連続で選択した場合も投稿できるようにする
+// TODO3: どの記事にどの画像が紐づくのかを作成する
 const PostArticles: React.FC = () => {
   const {register, handleSubmit, watch, errors} = useForm();
   const onSubmit = (data: any) => {
     console.log(data);
     AddCardBody(data);
+  }
+
+  const [image, setImage] = useState<any>("");
+  const [imageUrl, setImageUrl] = useState("");
+
+
+  const handleImage = (event: any) => {
+    let image = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = () => {
+      setImageUrl(reader.result as string);
+    }
+    setImage(image)
+    console.log("handleImage", image);
+  }
+
+  const fileOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (image === null) {
+      return;
+    }
+    console.log("fileOnSubmit", image)
+
+    const ref = storage.ref();
+    const imageRef = ref.child(`test/images/${image.name}`);
+    await imageRef.put(image);
+    return await imageRef.getDownloadURL();
+  };
+
+  const handleOnReset = () => {
+    setImage(null);
+    setImageUrl("");
+    console.log("handleOnReset", image);
   }
 
   return (
@@ -19,6 +57,22 @@ const PostArticles: React.FC = () => {
         {errors.another && <span>This filed is required.</span>}
         <input type="submit" />
       </form>
+
+      <div className="File">
+        <form onSubmit={fileOnSubmit}>
+          <input type="file" onChange={handleImage}/>
+          <input type="submit" />
+          <button onClick={handleOnReset}>Reset</button>
+        </form>
+      </div>
+
+      <div className="image-display">
+        {imageUrl !== "" ? 
+          <img src={imageUrl} width="300px"/>
+        : 
+          <p>No image</p>
+        }
+      </div>
     </>
   )
 };
