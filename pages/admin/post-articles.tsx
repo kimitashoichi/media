@@ -4,10 +4,6 @@ import { useForm } from "react-hook-form";
 import { AddCardBody } from "../api/articles/index";
 import { storage } from "../api/firebase";
 
-
-// TODO1: リセットボタンが動くようにする
-// TODO2: 同じ名前のファイルを連続で選択した場合も投稿できるようにする
-// TODO3: どの記事にどの画像が紐づくのかを作成する
 const PostArticles: React.FC = () => {
   const {register, handleSubmit, watch, errors} = useForm();
   const onSubmit = (data: any) => {
@@ -20,14 +16,17 @@ const PostArticles: React.FC = () => {
 
 
   const handleImage = (event: any) => {
-    let image = event.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = () => {
-      setImageUrl(reader.result as string);
+    if (event.target.files[0]) {
+      let image = event.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onload = () => {
+        setImageUrl(reader.result as string);
+      }
+      setImage(image)
+    } else {
+      setImage(null);
     }
-    setImage(image)
-    console.log("handleImage", image);
   }
 
   const fileOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -35,18 +34,17 @@ const PostArticles: React.FC = () => {
     if (image === null) {
       return;
     }
-    console.log("fileOnSubmit", image)
-
     const ref = storage.ref();
     const imageRef = ref.child(`test/images/${image.name}`);
     await imageRef.put(image);
+    setImage(null);
+    setImageUrl("");
     return await imageRef.getDownloadURL();
   };
 
   const handleOnReset = () => {
     setImage(null);
     setImageUrl("");
-    console.log("handleOnReset", image);
   }
 
   return (
@@ -62,7 +60,7 @@ const PostArticles: React.FC = () => {
         <form onSubmit={fileOnSubmit}>
           <input type="file" onChange={handleImage}/>
           <input type="submit" />
-          <button onClick={handleOnReset}>Reset</button>
+          <button onClick={() => handleOnReset()}>Reset</button>
         </form>
       </div>
 
