@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { AddCardBody } from "../api/articles/index";
+import { AddCardBody, GetAllArticles } from "../api/articles/index";
 import { storage } from "../api/firebase";
 
 const PostArticles: React.FC = () => {

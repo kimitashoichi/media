@@ -22,3 +22,30 @@ export const AddCardBody = async (data: any) => {
     return { error }
   }
 }
+
+// データ全件取得
+export const GetAllArticles = async () => {
+  try {
+    const articles: any = [];
+    await firestore
+    .collection('test')
+    .get()
+    .then(snapShot => {
+      if (snapShot.empty) {
+        return;
+      }
+      snapShot.forEach(doc => {
+        articles.push({
+          another: doc.data().another ? doc.data().another : "no name",
+          article: doc.data().article ? doc.data().article: "empty"
+        });
+      });
+    }).catch(error => {
+      throw new Error(error.message)
+    });
+    console.log("GetAllArticles", articles);
+    return { articles }
+  } catch (error) {
+    return { error }
+  }
+};
