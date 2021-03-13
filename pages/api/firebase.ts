@@ -13,7 +13,9 @@ const config = {
   measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID
 }
 
-firebase.initializeApp(config);
+if (firebase.apps.length === 0) {
+  firebase.initializeApp(config);
+}
 
 // 画像データ保存先
 export const storage = firebase.storage();
